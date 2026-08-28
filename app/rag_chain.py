@@ -7,6 +7,7 @@ Flow:
 """
 
 import logging
+import time
 from typing import TypedDict
 
 from langchain_openai import ChatOpenAI
@@ -38,7 +39,8 @@ QA_PROMPT = PromptTemplate(
 
 class RAGResponse(TypedDict):
     answer: str
-    sources: list
+    sources: list[str]
+    latency_ms: float
 
 
 def build_rag_chain() -> RetrievalQA:
@@ -71,10 +73,12 @@ def build_rag_chain() -> RetrievalQA:
 
 
 class RAGBot:
-    """Wrapper around the RAG chain with lazy loading and response formatting."""
+    """Wrapper around the RAG chain with lazy loading, latency tracking, and response formatting."""
 
     def __init__(self):
         self._chain = None
+        self.total_queries: int = 0
+        self.total_latency_ms: float = 0.0
 
     def _get_chain(self) -> RetrievalQA:
         if self._chain is None:
@@ -82,14 +86,23 @@ class RAGBot:
         return self._chain
 
     def ask(self, question: str) -> RAGResponse:
-        """Ask a question and get an answer with source citations."""
+        """Ask a question and get an answer with source citations and latency."""
+        settings = get_settings()
+
+        # Truncate overly long questions
+        if len(question) > settings.max_question_length:
+            question = question[:settings.max_question_length]
+            logger.warning("Question truncated to max_question_length")
+
         logger.info(f"Processing question: {question[:80]}...")
         chain = self._get_chain()
 
+        start = time.monotonic()
         try:
             result = chain.invoke({"query": question})
-            answer = result.get("result", "Sorry, I could not generate an answer.")
+            latency_ms = round((time.monotonic() - start) * 1000, 2)
 
+            answer = result.get("result", "Sorry, I could not generate an answer.")
             source_docs = result.get("source_documents", [])
             sources = list(
                 {
@@ -98,14 +111,27 @@ class RAGBot:
                 }
             )
 
-            return RAGResponse(answer=answer, sources=sources)
+            self.total_queries += 1
+            self.total_latency_ms += latency_ms
+            logger.info(f"Answer generated in {latency_ms}ms")
+
+            return RAGResponse(answer=answer, sources=sources, latency_ms=latency_ms)
 
         except Exception as e:
+            latency_ms = round((time.monotonic() - start) * 1000, 2)
             logger.error(f"RAG chain error: {e}", exc_info=True)
             return RAGResponse(
                 answer="I encountered an error processing your question. Please try again.",
                 sources=[],
+                latency_ms=latency_ms,
             )
+
+    @property
+    def avg_latency_ms(self) -> float:
+        """Average query latency in milliseconds."""
+        if self.total_queries == 0:
+            return 0.0
+        return round(self.total_latency_ms / self.total_queries, 2)
 
     def reset(self):
         """Force rebuild of the chain after re-ingestion."""
