@@ -1,0 +1,20 @@
+﻿FREQUENTLY ASKED QUESTIONS
+==========================
+
+Q: How do I submit an expense report?
+A: Submit expense reports through the Finance portal at finance.internal.company.com. Attach all receipts and submit within 30 days of the expense. Reimbursements are processed within 5-7 business days.
+
+Q: What is the parental leave policy?
+A: We offer 16 weeks of fully paid parental leave for primary caregivers and 8 weeks for secondary caregivers. This applies to birth, adoption, and foster placements.
+
+Q: How do I request new equipment?
+A: Submit an equipment request through the IT portal. Laptops are refreshed every 3 years. Peripherals such as mouse, keyboard, and monitor can be requested anytime with manager approval.
+
+Q: What is the performance review cycle?
+A: We conduct performance reviews twice per year: in June and December. Reviews include self-assessment, peer feedback, and manager evaluation.
+
+Q: How do I access the VPN?
+A: Download the company VPN client from the IT portal. Use your company email and the one-time password sent to your phone. Contact IT support at it-support@company.com for access issues.
+
+Q: Who do I contact for payroll questions?
+A: Reach out to payroll@company.com or visit the HR portal for payslips, tax documents, and payroll-related queries.

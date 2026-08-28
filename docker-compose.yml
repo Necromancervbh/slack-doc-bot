@@ -1,0 +1,16 @@
+﻿version: "3.9"
+
+services:
+  slack-doc-bot:
+    build: .
+    container_name: slack-doc-bot
+    env_file:
+      - .env
+    volumes:
+      - ./docs:/app/docs
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -1,0 +1,17 @@
+﻿langchain==0.3.25
+langchain-community==0.3.24
+langchain-openai==0.3.19
+langchain-pinecone==0.2.5
+pinecone-client==5.0.1
+pinecone==5.4.2
+slack-bolt==1.22.0
+openai==1.91.0
+pydantic-settings==2.7.1
+python-dotenv==1.1.0
+pypdf==5.4.0
+unstructured==0.17.2
+docx2txt==0.8
+fastapi==0.115.12
+uvicorn==0.34.3
+pytest==8.3.5
+pytest-asyncio==0.25.3
