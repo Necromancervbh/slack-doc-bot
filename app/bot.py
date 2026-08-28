@@ -5,6 +5,7 @@ Author: Vaibhav Shukla
 Commands:
   @DocBot <question>   - Ask anything about internal docs
   @DocBot refresh      - Re-ingest documents
+  @DocBot stats        - Show bot usage stats
   @DocBot help         - Show usage guide
 """
 
@@ -38,19 +39,25 @@ Ask me anything about your internal docs and I will find the answer!
 Usage:
   @DocBot what is our vacation policy?
   @DocBot how do I set up the dev environment?
-  @DocBot refresh  (Re-index all documents)
-  @DocBot help     (Show this message)
+  @DocBot refresh   - Re-index all documents
+  @DocBot stats     - Show usage statistics
+  @DocBot help      - Show this message
 
-Supported doc formats: .pdf .txt .md .docx
+Supported doc formats: .pdf  .txt  .md  .docx
 """
 
 
-def format_response(answer: str, sources: list) -> str:
+def format_response(answer: str, sources: list, latency_ms: float = 0.0) -> str:
     """Format RAG response as a clean Slack message."""
     blocks = [f"DocBot Answer\n\n{answer}"]
-    if sources:
+
+    if sources and settings.enable_source_citations:
         src_list = "\n".join(f"  - {s}" for s in sources)
         blocks.append(f"\nSources:\n{src_list}")
+
+    if latency_ms:
+        blocks.append(f"\nResponse time: {latency_ms}ms")
+
     blocks.append("\nPowered by LangChain + Pinecone + GPT-4o")
     return "\n".join(blocks)
 
@@ -81,6 +88,16 @@ def handle_mention(event, say, client):
             say(text=f"Re-indexing failed: {e}", thread_ts=thread_ts)
         return
 
+    if question.lower() in ("stats", "status"):
+        bot = get_rag_bot()
+        stats_msg = (
+            f"DocBot Stats\n\n"
+            f"Total queries answered: {bot.total_queries}\n"
+            f"Average response time: {bot.avg_latency_ms}ms"
+        )
+        say(text=stats_msg, thread_ts=thread_ts)
+        return
+
     if question.lower() in ("help", "?", "usage"):
         say(text=HELP_TEXT, thread_ts=thread_ts)
         return
@@ -89,13 +106,15 @@ def handle_mention(event, say, client):
 
     bot = get_rag_bot()
     response = bot.ask(question)
-    reply = format_response(response["answer"], response["sources"])
+    reply = format_response(response["answer"], response["sources"], response.get("latency_ms", 0))
     say(text=reply, thread_ts=thread_ts)
 
 
 @app.event("message")
 def handle_dm(event, say):
     """Handle direct messages to the bot."""
+    if not settings.enable_dm_support:
+        return
     if event.get("bot_id") or event.get("subtype") or event.get("channel_type") != "im":
         return
 
@@ -112,7 +131,7 @@ def handle_dm(event, say):
 
     bot = get_rag_bot()
     response = bot.ask(question)
-    reply = format_response(response["answer"], response["sources"])
+    reply = format_response(response["answer"], response["sources"], response.get("latency_ms", 0))
     say(text=reply)
 
 
@@ -123,6 +142,12 @@ def custom_error_handler(error, body, logger):
 
 
 def main():
+    missing = settings.validate_required_keys()
+    if missing:
+        logger.error(f"Missing required environment variables: {missing}")
+        logger.error("Please copy .env.example to .env and fill in all required keys.")
+        raise SystemExit(1)
+
     logger.info("Starting DocBot in Socket Mode...")
     handler = SocketModeHandler(app, settings.slack_app_token)
     handler.start()
