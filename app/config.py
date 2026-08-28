@@ -5,6 +5,7 @@ Author: Vaibhav Shukla
 
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+from typing import Literal
 
 
 class Settings(BaseSettings):
@@ -29,9 +30,32 @@ class Settings(BaseSettings):
     retrieval_k: int = 4
     docs_directory: str = "docs"
 
+    # Logging
+    log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
+
+    # Feature flags
+    enable_source_citations: bool = True
+    enable_dm_support: bool = True
+    max_question_length: int = 500
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+
+    def validate_required_keys(self) -> list[str]:
+        """Return list of missing required API keys."""
+        missing = []
+        if not self.openai_api_key:
+            missing.append("OPENAI_API_KEY")
+        if not self.pinecone_api_key:
+            missing.append("PINECONE_API_KEY")
+        if not self.slack_bot_token:
+            missing.append("SLACK_BOT_TOKEN")
+        if not self.slack_app_token:
+            missing.append("SLACK_APP_TOKEN")
+        if not self.slack_signing_secret:
+            missing.append("SLACK_SIGNING_SECRET")
+        return missing
 
 
 @lru_cache()
