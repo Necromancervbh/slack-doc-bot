@@ -1,4 +1,4 @@
-﻿# DocBot — AI Slack Assistant for Internal Docs
+# DocBot — AI Slack Assistant for Internal Docs
 
 > **Ask your team's Slack bot anything — and get answers from your actual company documents.**
 
@@ -71,7 +71,7 @@ LangChain RAG Chain (app/rag_chain.py)
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/vaibhavshukl23/slack-doc-bot.git
+git clone https://github.com/Necromancervbh/slack-doc-bot.git
 cd slack-doc-bot
 ```
 
@@ -233,7 +233,7 @@ MIT License — see [LICENSE](LICENSE) for details.
 ## Author
 
 **Vaibhav Shukla**
-- GitHub: [@vaibhavshukl23](https://github.com/vaibhavshukl23)
+- GitHub: [@Necromancervbh](https://github.com/Necromancervbh)
 - Email: vaibhavshukl23@gmail.com
 
 ---
