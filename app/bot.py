@@ -82,7 +82,10 @@ def handle_mention(event, say, client):
         try:
             ingest()
             get_rag_bot().reset()
-            say(text="Documents re-indexed successfully! Ready to answer questions.", thread_ts=thread_ts)
+            say(
+                text="Documents re-indexed successfully! Ready to answer questions.",
+                thread_ts=thread_ts,
+            )
         except Exception as e:
             logger.error(f"Ingestion error: {e}", exc_info=True)
             say(text=f"Re-indexing failed: {e}", thread_ts=thread_ts)

@@ -19,17 +19,22 @@ from app.ingestor import get_vector_store
 
 logger = logging.getLogger(__name__)
 
-SYSTEM_PROMPT = """You are a helpful internal team assistant. You answer questions based ONLY on the provided company documents.
-If the answer is not in the documents, say: I could not find that in our internal docs. Please check with the team directly.
-
-Always be concise, friendly, and professional. When possible, mention which document the information came from.
-
-Context from internal documents:
-{context}
-
-Question: {question}
-
-Answer:"""
+SYSTEM_PROMPT = (
+    "You are a helpful internal team assistant. You answer questions based ONLY on the "
+    "provided company documents.\n"
+    "If the answer is not in the documents, say: I could not find that in our internal docs. "
+    "Please check with the team directly.\n"
+    "\n"
+    "Always be concise, friendly, and professional. When possible, mention which document "
+    "the information came from.\n"
+    "\n"
+    "Context from internal documents:\n"
+    "{context}\n"
+    "\n"
+    "Question: {question}\n"
+    "\n"
+    "Answer:"
+)
 
 QA_PROMPT = PromptTemplate(
     template=SYSTEM_PROMPT,
