@@ -4,6 +4,7 @@
 
 Built by **Vaibhav Shukla**
 
+[![CI](https://github.com/Necromancervbh/slack-doc-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/Necromancervbh/slack-doc-bot/actions/workflows/ci.yml)
 [![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://python.org)
 [![LangChain](https://img.shields.io/badge/LangChain-0.3-green.svg)](https://langchain.com)
 [![Pinecone](https://img.shields.io/badge/Pinecone-Vector_DB-purple.svg)](https://pinecone.io)

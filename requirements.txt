@@ -2,8 +2,7 @@
 langchain-community==0.3.24
 langchain-openai==0.3.19
 langchain-pinecone==0.2.5
-pinecone-client==5.0.1
-pinecone==5.4.2
+pinecone==6.0.2
 slack-bolt==1.22.0
 openai==1.91.0
 pydantic-settings==2.7.1
